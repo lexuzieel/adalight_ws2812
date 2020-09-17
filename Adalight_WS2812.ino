@@ -19,19 +19,46 @@ uint8_t prefix[] = {'A', 'd', 'a'}, hi, lo, chk, i;
 // Initialise LED-array
 CRGB leds[NUM_LEDS];
 
+#define SPLASH_DELAY 32
+#define SPLASH_WAIT 2000
+#define SPLASH_BRIGHTNESS 16
+
+void splash() {
+  static uint8_t step = 0;
+
+  while (true) {
+    step++;
+    LEDS.showColor(CRGB(step, step, step));
+    delay(SPLASH_DELAY);
+
+    if (step >= SPLASH_BRIGHTNESS) {
+      break;
+    }
+  }
+
+  delay(SPLASH_WAIT);
+
+  while (true) {
+    step--;
+    LEDS.showColor(CRGB(step, step, step));
+    delay(SPLASH_DELAY);
+
+    if (step == 0) {
+      break;
+    }
+  }
+
+  LEDS.showColor(CRGB(0, 0, 0));
+}
+
+
 void setup() {
   // Use NEOPIXEL to keep true colors
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
-  
-  // Initial RGB flash
-  LEDS.showColor(CRGB(255, 0, 0));
-  delay(500);
-  LEDS.showColor(CRGB(0, 255, 0));
-  delay(500);
-  LEDS.showColor(CRGB(0, 0, 255));
-  delay(500);
-  LEDS.showColor(CRGB(0, 0, 0));
-  
+
+  // Run "splash" animation
+  splash();
+
   Serial.begin(serialRate);
   // Send "Magic Word" string to host
   Serial.print("Ada\n");
